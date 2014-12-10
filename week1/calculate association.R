@@ -13,7 +13,9 @@ calc.support <- function( n_combo , n_whole_population , threshold = 0.1 ){
   # =Nxy / Nall
   support <- n_combo / n_whole_population
   has_support <- identical(TRUE, support > threshold )
-  c(support, has_support)
+  result <- list(support, has_support)  
+  names(result) <- c('value','has_support')
+  result
 }
 
 calc.confidence <- function( n_combo, n_combo_either_or, threshold = 0.80 ) {
@@ -22,7 +24,9 @@ calc.confidence <- function( n_combo, n_combo_either_or, threshold = 0.80 ) {
   # = Nxy / Nx
   confidence <- n_combo / n_combo_either_or
   has_confidence <- identical(TRUE, confidence > threshold ) 
-  c(confidence, has_confidence)
+  result <- list(confidence, has_confidence)  
+  names(result) <- c('value','has_confidence')
+  result
 }
                                                                
   
@@ -39,12 +43,14 @@ calc.lift <- function( n_combo, n_pop, n_one_of, n_other_of, threshold = 0.05) {
   
   lift_val <- n_combo * n_pop / ( n_one_of * n_other_of )
   if (lift_val > ( 1 + threshold ) )  {
-    c(lift_val, "positive correlation") 
+    result <- list(lift_val, "positive correlation") 
   } else if (lift_val < ( 1 - threshold ) ) {
-    c(lift_val, "negative correlation") 
+    result <- list(lift_val, "negative correlation") 
   } else {
-    c(lift_val, "independent / not correlated")
+    result <- list(lift_val, "independent / not correlated")
   }
+  names(result) <- c('value','correlation_type')
+  result
 }
 
 calculate.association <- function( num_x, num_y, num_xy, num_all, support_threshold = 0.1, confidence_threshold = 0.8, lift_threshold = 0.05){
@@ -69,19 +75,21 @@ test_not <- function(val){
 show_results <- function(num_x, num_y, num_xy, num_all){
   association <- calculate.association( num_x, num_y, num_xy, num_all, 0.1, 0.8, 0.05 )
   #print 3 lines of association values per test
+  #message = 2
+  #value = 1
   print (sprintf("   %s supported by value of %s", 
-                 test_not(association$support[2]), 
-                 association$support[1]
+                 test_not(association$support$has_support), 
+                 association$support$value
                  )
          )
   print (sprintf("   %s confident by value of %s", 
-                 test_not(association$confidence[2]), 
-                 association$confidence[1]
+                 test_not(association$confidence$has_confidence), 
+                 association$confidence$value
                  )
          )
   print (sprintf("   %s with lift value of %s", 
-                 association$lift[2], 
-                 association$lift[1]
+                 association$lift$correlation_type, 
+                 association$lift$value
                  )
          )
 }

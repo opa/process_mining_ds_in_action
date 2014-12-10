@@ -2,38 +2,27 @@
 
 
 quality.confusion_matrix <- function( true_pos, false_pos, false_neg, true_neg ) {
-  positive <- c('positive', true_pos + false_neg)
-  negative <- c('negative', true_neg + false_pos)
-  pos_prime <- c('pos_prime', true_pos + false_pos)
-  neg_prime <- c('neg_prime', true_neg + false_neg)
-  k <- c('k', false_neg + true_neg + false_pos + true_neg)
-  error <- c('error', (false_pos + false_neg) / as.numeric(k[2]) )
-  accuracy <- c('accuracy',  (true_pos + true_neg) / as.numeric(k[2]) )
-  precision <- c('precision',  true_pos / ( true_pos + false_pos ) )
-  recall <- c('recall', true_pos / ( true_pos + false_neg) )
-  f1_score <- c('f1_score' , 2 * as.numeric(precision[2]) * as.numeric(recall[2]) / ( as.numeric(precision[2]) + as.numeric(recall[2]) ) )
-  quality <- list(as.numeric( positive[2]) ,
-                  as.numeric( negative[2]) ,
-                  as.numeric( pos_prime[2]) ,
-                  as.numeric( neg_prime[2]) ,
-                  as.numeric( k[2]) ,
-                  as.numeric( error[2]) ,
-                  as.numeric( accuracy[2]) ,
-                  as.numeric( precision[2]) ,
-                  as.numeric( recall[2]) ,
-                  as.numeric( f1_score[2])
+  positive = true_pos + false_neg
+  negative = true_neg + false_pos
+  pos_prime = true_pos + false_pos
+  neg_prime = true_neg + false_neg
+  k = false_neg + true_neg + false_pos + true_neg
+  error = (false_pos + false_neg) / k 
+  accuracy = (true_pos + true_neg) / k 
+  precision = true_pos / ( true_pos + false_pos ) 
+  recall = true_pos / ( true_pos + false_neg) 
+  f1_score = 2 * precision * recall / ( precision + recall ) 
+  quality <- list( 'positive' =  positive ,
+                  'negative' =  negative ,
+                  'pos_prime' =  pos_prime ,
+                  'neg_prime' = neg_prime ,
+                  'k' =  k ,
+                  'error' = error ,
+                  'accuracy' = accuracy ,
+                  'precision' = precision ,
+                  'recall' = recall ,
+                  'f1_score' = f1_score
                 )  
-  names(quality) <- c(positive[1] ,
-                      negative[1] ,
-                      pos_prime[1] ,
-                      neg_prime[1] ,
-                      k[1] ,
-                      error[1] ,
-                      accuracy[1] ,
-                      precision[1] ,
-                      recall[1] ,
-                      f1_score[1]
-                    )  
    quality  
 }
 examples_in_lecture <- function(){
