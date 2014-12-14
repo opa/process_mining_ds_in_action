@@ -28,9 +28,7 @@ calc.confidence <- function( n_combo, n_combo_either_or, threshold = 0.80 ) {
   names(result) <- c('value','has_confidence')
   result
 }
-                                                               
-  
-  
+
 calc.lift <- function( n_combo, n_pop, n_one_of, n_other_of, threshold = 0.05) {
   ## lift( X=> Y ) = Nxy * Nall / ( Nx * Ny )
   
@@ -43,13 +41,13 @@ calc.lift <- function( n_combo, n_pop, n_one_of, n_other_of, threshold = 0.05) {
   
   lift_val <- n_combo * n_pop / ( n_one_of * n_other_of )
   if (lift_val > ( 1 + threshold ) )  {
-    result <- list(lift_val, "positive correlation") 
+    result <- list(lift_val, "positive correlation", 1) 
   } else if (lift_val < ( 1 - threshold ) ) {
-    result <- list(lift_val, "negative correlation") 
+    result <- list(lift_val, "negative correlation", -1) 
   } else {
-    result <- list(lift_val, "independent / not correlated")
+    result <- list(lift_val, "independent / not correlated", 0)
   }
-  names(result) <- c('value','correlation_type')
+  names(result) <- c('value','correlation', 'correlation_type')
   result
 }
 
@@ -60,38 +58,8 @@ calculate.association <- function( num_x, num_y, num_xy, num_all, support_thresh
   keys = c("support", "confidence", "lift")
   association <- list(support_case, confidence_case, lift_case)
   names(association) <- keys
+  print(sprintf("%s: %s", attr(association, 'names'), association))
   association
-}
-
-test_not <- function(val){
-  # just to print a pretty sentence
-  if (val == TRUE) {
-    ""
-  } else {
-    "not"
-  }    
-}
-
-show_results <- function(num_x, num_y, num_xy, num_all){
-  association <- calculate.association( num_x, num_y, num_xy, num_all, 0.1, 0.8, 0.05 )
-  #print 3 lines of association values per test
-  #message = 2
-  #value = 1
-  print (sprintf("   %s supported by value of %s", 
-                 test_not(association$support$has_support), 
-                 association$support$value
-                 )
-         )
-  print (sprintf("   %s confident by value of %s", 
-                 test_not(association$confidence$has_confidence), 
-                 association$confidence$value
-                 )
-         )
-  print (sprintf("   %s with lift value of %s", 
-                 association$lift$correlation_type, 
-                 association$lift$value
-                 )
-         )
 }
 
 diaper_example_analysis <- function() {
@@ -107,38 +75,51 @@ diaper_example_analysis <- function() {
     #support= {pampers,dommelsch}/{all_purchases}
     #confidence= {pampers,dommelsch}/{all_pampers_purchases}
     #lift= {pampers,dommelsch}{all_purchases} / ( {all_pamper_purchases} * {all dommelsch purchases} )  
-  show_results( num_x = 91, 
+  calculate.association( num_x = 91, 
                 num_y = 51, 
                 num_xy = 51, 
-                num_all = 100
+                num_all = 100,
+                support_threshold = 0.1, 
+                confidence_threshold = 0.8, 
+                lift_threshold = 0.05
                )    
+  print("")
   print("{Pampers} => {hoegaarden}")  
   #support= {pampers,hoegaarden}/{all_purchases} 
   #confidence= {pampers,hoegaarden}/{all_pampers_purchases} 
   #lift= {pampers,hoegaarden}{all_purchases} / ( {all_pamper_purchases} * {all hoegarden purchases} )"   
-  show_results( num_x = 91, 
+  calculate.association( num_x = 91, 
                 num_y = 10, 
                 num_xy = 1, 
-                num_all = 100
-               )
+                num_all = 100,
+                support_threshold = 0.1, 
+                confidence_threshold = 0.8, 
+                lift_threshold = 0.05 )    
+  print("")
   print("{Dommelsch} => {Pampers}")  
   #support= {pampers,dommelsch}/{all_purchases} 
   #confidence= {pampers,dommelsch}/{all_dommelsch_purchases} 
   #lift= {pampers,dommelsch}{all_purchases} / ( {all_pamper_purchases} * {all dommelsch purchases} )    
-  show_results( num_x = 51, 
+  calculate.association( num_x = 51, 
                 num_y = 91, 
                 num_xy = 51, 
-                num_all = 100
-              )  
+                num_all = 100,
+                support_threshold = 0.1, 
+                confidence_threshold = 0.8, 
+                lift_threshold = 0.05 )    
+  print("")
   print("{pampers, dommelsch} => {hoegaarden}")  
   #support= {pampers,dommelsch,hoegaarden}/{all_purchases} 
   #confidence= {pampers,dommelsch, hoegaarden}/{all_pampers_dommelsch_purchases}  
   #lift= {pampers,dommelsch,hoegaarden}{all_purchases} / ( {all_pampers_dommelsch_purchases} * {all Hoegaarden purchases} ) 
-  show_results( num_x = 51, 
+  calculate.association( num_x = 51, 
                 num_y = 10, 
                 num_xy = 1, 
-                num_all = 100  
-               )
+                num_all = 100,
+                support_threshold = 0.1, 
+                confidence_threshold = 0.8, 
+                lift_threshold = 0.05 )    
+  
 }
 diaper_example_analysis()
 

@@ -23,19 +23,14 @@ quality.confusion_matrix <- function( true_pos, false_pos, false_neg, true_neg )
                   'recall' = recall ,
                   'f1_score' = f1_score
                 )  
-   quality  
+  print(sprintf("%s: %s", attr(quality, 'names'), quality))
+  quality  
 }
 examples_in_lecture <- function(){
   print("example 1: true_pos= 546, false_pos= 314, false_neg= 0, true_neg= 0")
   quality <- quality.confusion_matrix( true_pos= 546, false_pos= 314, false_neg= 0, true_neg= 0)
-  print(sprintf("the precision is: %s" , quality$precision))
-  print(sprintf("the recall is: %s" , quality$recall))
-  print(sprintf("the F1-score is: %s" , quality$f1_score))
   
   print("example 2: true_pos= 544, false_pos= 251, false_neg= 2, true_neg= 63")
   quality <- quality.confusion_matrix( true_pos= 544, false_pos= 251, false_neg= 2, true_neg= 63)
-  print(sprintf("the precision is: %s" , quality$precision))
-  print(sprintf("the recall is: %s" , quality$recall))
-  print(sprintf("the F1-score is: %s" , quality$f1_score))
 }
 examples_in_lecture()
